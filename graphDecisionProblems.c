@@ -11,38 +11,85 @@
 
 #define MAX_N 101
 
-int n, m, k, binaryString[MAX_N];
+int n, m, k, binaryString[MAX_N], isDom, isInd, isCliq, isVert;
+
+// Check for a dominating set
+int checkDominatingSet(int matrix[MAX_N][MAX_N]) {
+    int checkCol = 1;
+
+    for (int i = 1; i < n + 1; i++) {
+        int checkRow = 0;
+        for (int j = 1; j < n + 1; j++) {
+            if (binaryString[j] == 1 && matrix[i][j] == 1) {
+                j = n + 1;
+                checkRow = 1;
+            }
+        }
+        if (!checkRow) {
+            i = n + 1;
+            checkCol = 0;
+        }
+    }
+
+    if (checkCol)
+        return 1;
+    return 0;
+}
+
+// Check for an independent set
+int checkIndependentSet(int matrix[MAX_N][MAX_N]) {
+    return 0;
+}
+
+// Check for a clique
+int checkClique(int matrix[MAX_N][MAX_N]) {
+
+    for (int i = 1; i < n + 1; i++) {
+        if (binaryString[i] == 1) {
+
+        }
+    }
+
+    return 0;
+}
+
+// Check for a vertex cover
+int checkVertexCover(int matrix[MAX_N][MAX_N]) {
+    for (int i = 1; i < n + 1; i++) {
+        for (int j = 1; j < n + 1; j++) {
+            if (matrix[i][j] == 1 && i != j) {// If theres an edge
+                int found = 0;
+                if (binaryString[i] == 1 || binaryString[j] == 1)//Check that it is covered
+                    found = 1;
+                if (!found) return 0;
+            }
+        }
+    }
+    return 1;
+}
 
 // Generate binary strings of length n with k 1s
 void listBinary(int t, int numOnes, int matrix[MAX_N][MAX_N]) {
     // Strings of length n with k ones
     if (t > n) {
-        for (int i = 1; i < n + 1; i++) {
+        /*for (int i = 1; i < n + 1; i++) {
             printf("%d", binaryString[i]);
         }
+        printf("\n");*/
+
+        isDom += checkDominatingSet(matrix);
+        isInd += checkIndependentSet(matrix);
+        isCliq += checkIndependentSet(matrix);
+        isVert += checkVertexCover(matrix);
         printf("\n");
-        /*int checkCol = 1;
-        for (int i = 1; i < n + 1; i++) {
-            int checkRow = 0;
-            for (int j = 1; j < n + 1; j++) {
-                if (binaryString[j] == 1 && matrix[i][j] == 1) {
-                    j = n + 1;
-                    checkRow = 1;
-                }
-            }
-            if (!checkRow) {
-                i = n + 1;
-                checkCol = 0;
-            }
-        }*/
     // Concat. new parts of binary string
     } else {
-        if (n - t + 1 > k - numOnes && found != 1) {
+        if (n - t + 1 > k - numOnes) {
             binaryString[t] = 0;
             listBinary(t + 1, numOnes, matrix);
         }
 
-        if (numOnes < k && found != 1) {
+        if (numOnes < k) {
             binaryString[t] = 1;
             listBinary(t + 1, numOnes + 1, matrix);
         }
@@ -90,15 +137,21 @@ void checkGraph(char *filename) {
 
     readEdgeListing(filename, matrix);
     listBinary(1, 0, matrix);
+
+    // Print results
+    isDom  ? printf(" (a) YES") : printf(" (a) NO");
+    isInd  ? printf(" (b) YES") : printf(" (b) NO");
+    isCliq ? printf(" (c) YES") : printf(" (c) NO");
+    isVert ? printf(" (d) YES\n") : printf(" (d) NO\n");
 }
 
 int main () {
     int i = 0;
-    printf("Graph %d:  ", ++i); checkGraph("ass3_g1.txt");
+    /*printf("Graph %d:  ", ++i); checkGraph("ass3_g1.txt");
     printf("Graph %d:  ", ++i); checkGraph("ass3_g2.txt");
     printf("Graph %d:  ", ++i); checkGraph("ass3_g3.txt");
     printf("Graph %d:  ", ++i); checkGraph("ass3_g4.txt");
-    printf("Graph %d:  ", ++i); checkGraph("ass3_g5.txt");
+    printf("Graph %d:  ", ++i); checkGraph("ass3_g5.txt");*/
     printf("Graph %d:  ", ++i); checkGraph("ass3_g6.txt");
     return 0;
 }
