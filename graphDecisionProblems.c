@@ -38,26 +38,42 @@ int checkDominatingSet(int matrix[MAX_N][MAX_N]) {
 
 // Check for an independent set
 int checkIndependentSet(int matrix[MAX_N][MAX_N]) {
-    return 0;
+    for (int i = 1; i < n + 1; i++) {
+        for (int j = 1; j < n + 1; j++) {
+            if (matrix[i][j] == 1 && i != j) {// Check very edge
+                int numFound = 0;
+                // Check that every edge has at most one vertex of V'
+                if (binaryString[i] == 1) numFound++;
+                if (binaryString[j] == 1) numFound++;
+                if (numFound > 1) return 0;
+            }
+        }
+    }
+    return 1;
 }
 
 // Check for a clique
 int checkClique(int matrix[MAX_N][MAX_N]) {
-
     for (int i = 1; i < n + 1; i++) {
+        // If theres a 1 in binaryString, check that that vertex is
+        // adjacent to all other vertices in binaryString
         if (binaryString[i] == 1) {
-
+            for (int j = 1; j < n + 1; j++) {
+                if (i != j) {
+                    if (binaryString[j] == 1 && matrix[i][j] != 1)
+                        return 0;
+                }
+            }
         }
     }
-
-    return 0;
+    return 1;
 }
 
 // Check for a vertex cover
 int checkVertexCover(int matrix[MAX_N][MAX_N]) {
     for (int i = 1; i < n + 1; i++) {
         for (int j = 1; j < n + 1; j++) {
-            if (matrix[i][j] == 1 && i != j) {// If theres an edge
+            if (matrix[i][j] == 1 && i != j) {// Check every edge
                 int found = 0;
                 if (binaryString[i] == 1 || binaryString[j] == 1)//Check that it is covered
                     found = 1;
@@ -79,9 +95,8 @@ void listBinary(int t, int numOnes, int matrix[MAX_N][MAX_N]) {
 
         isDom += checkDominatingSet(matrix);
         isInd += checkIndependentSet(matrix);
-        isCliq += checkIndependentSet(matrix);
+        isCliq += checkClique(matrix);
         isVert += checkVertexCover(matrix);
-        printf("\n");
     // Concat. new parts of binary string
     } else {
         if (n - t + 1 > k - numOnes) {
@@ -135,23 +150,28 @@ void checkGraph(char *filename) {
         for (int j = 0; j < MAX_N; j++)
             matrix[i][j] = 0;
 
+    isDom = 0;
+    isInd = 0;
+    isCliq = 0;
+    isVert = 0;
+
     readEdgeListing(filename, matrix);
     listBinary(1, 0, matrix);
 
     // Print results
-    isDom  ? printf(" (a) YES") : printf(" (a) NO");
-    isInd  ? printf(" (b) YES") : printf(" (b) NO");
-    isCliq ? printf(" (c) YES") : printf(" (c) NO");
+    isDom  ? printf(" (a) YES  ") : printf(" (a) NO   ");
+    isInd  ? printf(" (b) YES  ") : printf(" (b) NO   ");
+    isCliq ? printf(" (c) YES  ") : printf(" (c) NO   ");
     isVert ? printf(" (d) YES\n") : printf(" (d) NO\n");
 }
 
 int main () {
     int i = 0;
-    /*printf("Graph %d:  ", ++i); checkGraph("ass3_g1.txt");
+    printf("Graph %d:  ", ++i); checkGraph("ass3_g1.txt");
     printf("Graph %d:  ", ++i); checkGraph("ass3_g2.txt");
     printf("Graph %d:  ", ++i); checkGraph("ass3_g3.txt");
     printf("Graph %d:  ", ++i); checkGraph("ass3_g4.txt");
-    printf("Graph %d:  ", ++i); checkGraph("ass3_g5.txt");*/
+    printf("Graph %d:  ", ++i); checkGraph("ass3_g5.txt");
     printf("Graph %d:  ", ++i); checkGraph("ass3_g6.txt");
     return 0;
 }
